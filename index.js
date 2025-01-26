@@ -8,27 +8,18 @@ fetchLatestBaileysVersion,
 Browsers
 } = require('@whiskeysockets/baileys')
 
-
-const l = console.log
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const fs = require('fs')
-const ff = require('fluent-ffmpeg')
 const P = require('pino')
 const config = require('./config')
 const qrcode = require('qrcode-terminal')
-const StickersTypes = require('wa-sticker-formatter')
 const util = require('util')
 const { sms,downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
-const { fromBuffer } = require('file-type')
-const bodyparser = require('body-parser')
-const mongoose = require('mongoose')
-const { tmpdir } = require('os')
-const Crypto = require('crypto')
-const path = require('path')
+const prefix = '.'
 
-const ownerNumber = ['94771098429']
+const ownerNumber = ['94788240417']
 
 //===================SESSION-AUTH============================
 if (!fs.existsSync(__dirname + '/auth_info_baileys/creds.json')) {
@@ -38,26 +29,17 @@ const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
 filer.download((err, data) => {
 if(err) throw err
 fs.writeFile(__dirname + '/auth_info_baileys/creds.json', data, () => {
-console.log("Session downloaded ✅")
+console.log("Queen_Ahinsa-MD Session downloaded ✅")
 })})}
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 9090;
+const port = process.env.PORT || 8000;
 
 //=============================================
 
 async function connectToWA() {
-//===================connect mongodb===================
-const connectDB = require('./lib/mongodb')
-connectDB();
-//==================================
-const {readEnv} = require('./lib/database')
-const config = await readEnv();
-const prefix = ('.')
-//=================================
-        
-console.log("ᴄᴏɴɴᴇᴄᴛɪɴɢ Queen_Ahinsa-MD ʙᴏᴛ 🧬...");
+console.log("Connecting Queen_Ahinsa-MD 🧬...");
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
 
@@ -77,27 +59,34 @@ if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 connectToWA()
 }
 } else if (connection === 'open') {
-console.log('😼 ɪɴsᴛᴀʟʟɪɴɢ ᴘʟᴜɢɪɴs ғɪʟᴇs ᴘʟᴢ ᴡᴀɪᴛ 🔌... ')
+console.log('Avishka_X-MD Is Installing... ')
 const path = require('path');
 fs.readdirSync("./plugins/").forEach((plugin) => {
 if (path.extname(plugin).toLowerCase() == ".js") {
 require("./plugins/" + plugin);
 }
 });
-console.log('ᴘʟᴜɢɪɴs ɪɴsᴛᴀʟʟᴇᴅ sᴜᴄᴄᴇssғᴜʟʏ 🔌✅')
-console.log('QUEEN_AHINSA-MD ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴛᴏ ᴡʜᴀᴛsᴀᴘᴘ ✅')
+console.log('Plugins installed successful 🔌')
+console.log('Queen_Ahinsa-MD connected to whatsapp ✅')
 
-let up = `> *➺Queen_Ahinsa-MD ᴄᴏɴɴᴇᴄᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʏ ᴛʏᴘᴇ .ᴍᴇɴᴜ ᴛᴏ ᴄᴏᴍᴍᴀɴᴅ ʟɪsᴛ ᴄʀᴇᴀᴛᴇᴅ ʙʏ DILISHA Gimshan ✅*
+let up = `
+🚀 **QUEEN_AHINSA-MD Connected Successfully!** ✅ 
 
-╭⊱✫🔮 QUEEN_AHINSA-MD 🔮✫⊱╮
-│✫➠ - *📂REPOSITORY NAME:* Queen_Ahinsa-MD 
-│✫➠ - *📃DESCRIPTION:* ❁ᴡᴏʀʟᴅ ʙᴇsᴛ ᴡʜᴀᴛsᴀᴘᴘ ʙᴏᴛ❁
-│✫➠ - *🛡️OWNER:* DILISHA Gimshan 
-│✫➠ - *🌐 URL:* https://github.com/Koyeb-LK/Queen_Ahinsa-MD 
-╰━━━━━━━━━━━━━━━━━╯
+--- **🎉 Welcome to Queen_Ahinsa-MD!** 🎉 
 
-*YOUR BOT ACTIVE NOW ENJOY♥️🪄*\n\nPREFIX: ${prefix}`;
-conn.sendMessage(ownerNumber + "@s.whatsapp.net", { image: { url: `https://i.ibb.co/SR76mBh/Pu3-ZYHBS5139.jpg` }, caption: up })
+**🔹 PREFIX:** ${prefix}
+
+**🔹 OWNER:**  ${ownerNumber}
+
+--- Thank you for using **Queen_Ahinsa-MD**. 
+We're here to make your experience enjoyable and seamless. 
+If you need any help or have questions, don't hesitate to ask. 
+
+**Enjoy your time with us!** 😊
+
+> & POWERED BY DILISHA GIMSHAN 😊 `;
+
+conn.sendMessage(config.BOT_NUMBER + "@s.whatsapp.net", { image: { url: `https://i.ibb.co/SR76mBh/Pu3-ZYHBS5139.jpg` }, caption: up })
 
 }
 })
@@ -114,6 +103,9 @@ const m = sms(conn, mek)
 const type = getContentType(mek.message)
 const content = JSON.stringify(mek.message)
 const from = mek.key.remoteJid
+        if (config.ALWAYS_RECORDING === "true") {
+            await conn.sendPresenceUpdate('recording', from)
+        }
 const quoted = type == 'extendedTextMessage' && mek.message.extendedTextMessage.contextInfo != null ? mek.message.extendedTextMessage.contextInfo.quotedMessage || [] : []
 const body = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : (type == 'imageMessage') && mek.message.imageMessage.caption ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption ? mek.message.videoMessage.caption : ''
 const isCmd = body.startsWith(prefix)
@@ -138,7 +130,7 @@ const isReact = m.message.reactionMessage ? true : false
 const reply = (teks) => {
 conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
-        
+
 conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
               let mime = '';
               let res = await axios.head(url)
@@ -161,18 +153,113 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
               }
             }
 
-
-//=================================WORKTYPE=========================================== 
+//==============================//
+if (isCmd && config.READ_CMD === "true") {
+              await conn.readMessages([mek.key])  // Mark command as read
+          }
 if(!isOwner && config.MODE === "private") return
 if(!isOwner && isGroup && config.MODE === "inbox") return
-if(!isOwner && isGroup && config.MODE === "groups") return
-//======================================================
+if(!isOwner && !isGroup && config.MODE === "groups") return
 
+//=====================✓
+if (config.AUTO_VOICE === 'true') {
+const url = 'https://raw.githubusercontent.com/AKTP-BOT/voice5/refs/heads/main/voice-raw/Akv5'
+let { data } = await axios.get(url)
+for (vr in data){
+if((new RegExp(`\\b${vr}\\b`,'gi')).test(body)) conn.sendMessage(from,{audio: { url : data[vr]},mimetype: 'audio/mpeg',ptt:true},{quoted:mek})   
+}}
+//=============================//
+if (config.ANTI_LINK == "true"){
+        if (!isOwner ) {   
+        if (body.match(`whatsapp.com`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `📌Link Detectrue Queen_Ahinsa-MD📌`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_LINK == "true"){
+        if (!isOwner ) {   
+        if (body.match(`youtube.com`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `📌 *Link Detected by Queen_Ahinsa-MD* 📌\n⚠️❗ *Anti link on....* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Hutto`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let ak = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: ak }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Ponnaya`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Pako`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Pakaya`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Kari`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Kariya`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Hukapn`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
+if (config.ANTI_BAD == "true"){
+        if (!isOwner ) {   
+        if (body.match(`Hukapan`)) {
+            
+        if (isMe) return await reply("Link Derect but I cant Delete link")
+        if(groupAdmins.includes(sender)) return
+            let repoInfo = `⚠️❗ *Don't use bad word* ⚠️❗`;
+        await conn.sendMessage(from, { text: repoInfo }, { quoted: mek });  
+        }}}
 
-
-
-
-        
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
 if (isCmd) {
@@ -203,13 +290,13 @@ mek.type === "stickerMessage"
 ) {
 command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
 }});
-
+//============================================================================ 
 })
 }
 app.get("/", (req, res) => {
-res.send("HEY, Queen_Ahinsa-MD STARTED ✅");
+res.send("hey I am alive, Queen_Ahinsa-MD Is started✅");
 });
 app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
 setTimeout(() => {
 connectToWA()
-}, 4000);
+}, 4000);  
